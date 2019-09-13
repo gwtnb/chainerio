@@ -49,25 +49,25 @@ class TestHdfsHandler(unittest.TestCase):
             file_list = list(file_generator)
             self.assertIn(self.tmpfile_name, file_list)
 
-            test_dir_name = "testmkdir/"
-            nested_dir1 = os.path.join(test_dir_name, "nested_dir1")
-            nested_dir2 = os.path.join(test_dir_name, "nested_dir2")
-            nested_file = os.path.join(nested_dir2 + "file")
-            handler.makedirs(nested_dir1)
-            handler.makedirs(nested_dir2)
+            for test_dir_name in ["testmkdir", "testmkdir/"]:
+                nested_dir1 = os.path.join(test_dir_name, "nested_dir1")
+                nested_dir2 = os.path.join(test_dir_name, "nested_dir2")
+                nested_file = os.path.join(nested_dir2 + "file")
+                handler.makedirs(nested_dir1)
+                handler.makedirs(nested_dir2)
 
-            with handler.open(nested_file, "w") as f:
-                f.write(self.test_string)
+                with handler.open(nested_file, "w") as f:
+                    f.write(self.test_string)
 
-            recursive_file_generator = handler.list(test_dir_name,
-                                                    recursive=True)
-            self.assertIsInstance(recursive_file_generator, Iterable)
-            file_list = list(recursive_file_generator)
-            self.assertIn(nested_dir1, file_list)
-            self.assertIn(nested_dir2, file_list)
-            self.assertIn(nested_file, file_list)
+                recursive_file_generator = handler.list(test_dir_name,
+                                                        recursive=True)
+                self.assertIsInstance(recursive_file_generator, Iterable)
+                file_list = list(recursive_file_generator)
+                self.assertIn(nested_dir1, file_list)
+                self.assertIn(nested_dir2, file_list)
+                self.assertIn(nested_file, file_list)
 
-            handler.remove(test_dir_name, True)
+                handler.remove(test_dir_name, True)
 
     def test_info(self):
         with chainerio.create_handler(self.fs) as handler:
